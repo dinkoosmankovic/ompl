@@ -38,6 +38,8 @@
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
 #include "ompl/util/String.h"
+#include "ompl/base/Bur.h"
+
 
 ompl::geometric::RBTConnect::RBTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)
   : base::Planner(si, addIntermediateStates ? "RBTConnectIntermediate" : "RBTConnect")
@@ -140,8 +142,11 @@ ompl::geometric::RBTConnect::GrowState ompl::geometric::RBTConnect::growTree(Tre
     }
 
     double dist = si_->getStateValidityChecker()->clearance(dstate);
+    base::Bur bur(dstate, 7);
 
     OMPL_INFORM("Distance: %.4f", dist);
+
+    OMPL_INFORM("Spines: %d", bur.getNumberOfSpines() );
 
     bool validMotion = tgi.start ? si_->checkMotion(nmotion->state, dstate) :
                                    si_->isValid(dstate) && si_->checkMotion(dstate, nmotion->state);
